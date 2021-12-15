@@ -6,26 +6,12 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.time.Duration;
 
 
-public class SearchingForItemsTests {
-    static WebDriver driver;
+public class SearchingForItemsTests extends BaseClassTests{
 
-    @BeforeAll
-    static void warmuUp() {
-
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
-    }
-
-    @BeforeEach
-    void clearCookies() {
-        driver.manage().deleteAllCookies();
-
-    }
 
     @Test
     void shouldSearchForTheItemCorrectly() {
-        driver.navigate().to("http://automationpractice.com/");
+
         driver.findElement(By.id("search_query_top")).sendKeys("T-SHIRTS");
         driver.findElement(By.name("submit_search")).click();
         Assertions.assertTrue(driver.getCurrentUrl().contains("controller=search&orderby=position&orderway=desc&search_query=T-SHIRTS&submit_search="));
@@ -37,16 +23,12 @@ public class SearchingForItemsTests {
 
     @Test
     void shouldNotLookForAnItemThatIsNotInTheStore() {
-        driver.navigate().to("http://automationpractice.com/");
+
         driver.findElement(By.id("search_query_top")).sendKeys("women's pants");
         driver.findElement(By.name("submit_search")).click();
         Assertions.assertEquals("No results were found for your search \"women's pants\"", driver.findElement(By.xpath("//*[@id=\"center_column\"]/p")).getText());
     }
 
-    @AfterAll
-    static void tearDown() {
-        driver.close();
-    }
 }
 
 

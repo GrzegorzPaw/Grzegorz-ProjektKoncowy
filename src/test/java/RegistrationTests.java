@@ -1,4 +1,5 @@
 import com.github.javafaker.Faker;
+import navigation.MainPage;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -7,29 +8,16 @@ import org.openqa.selenium.support.ui.Select;
 
 import java.time.Duration;
 
-public class RegistrationTests {
-    static WebDriver driver;
-
-    @BeforeAll
-    static void warmuUp() {
-
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-    }
-
-    @BeforeEach
-    void clearCookies() {
-        driver.manage().deleteAllCookies();
-    }
+public class RegistrationTests extends BaseClassTests {
+    MainPage mainPage = new MainPage(driver);
 
     @Test
     void shouldRegisterCorrectly() {
 
         Faker faker = new Faker();
         String uniqueEmail = faker.name().firstName() + faker.name().lastName() + faker.random().nextInt(1000) + "@gamil.com";
-        driver.navigate().to("http://automationpractice.com/");
-        driver.findElement(By.xpath("//*[@id=\"header\"]/div[2]/div/div/nav/div[1]/a")).click();
+
+        mainPage.clickSignInButton();
         driver.findElement(By.id("email_create")).sendKeys(uniqueEmail);
         driver.findElement(By.id("SubmitCreate")).click();
         driver.findElement(By.id("id_gender2")).click();
@@ -54,13 +42,14 @@ public class RegistrationTests {
         driver.findElement(By.id("alias")).sendKeys("ASdasda 1231");
         driver.findElement(By.id("submitAccount")).click();
         Assertions.assertTrue(driver.getCurrentUrl().contains("controller=my-account"));
+        driver.findElement(By.className("logout")).click();
 
     }
 
     @Test
     void shouldNotRegisterWithTheSameLoginValue() {
-        driver.navigate().to("http://automationpractice.com/");
-        driver.findElement(By.xpath("//*[@id=\"header\"]/div[2]/div/div/nav/div[1]/a")).click();
+
+        mainPage.clickSignInButton();
         driver.findElement(By.id("email_create")).sendKeys("maniek1@man.wp.pl");
         driver.findElement(By.id("SubmitCreate")).click();
         Assertions.assertTrue(driver.getCurrentUrl().contains("controller=authentication&back=my-account"));
@@ -72,8 +61,7 @@ public class RegistrationTests {
     void shouldNotRegisterWithoutFillingInTheReguiredFields() {
         Faker faker = new Faker();
         String uniqueEmail = faker.name().firstName() + faker.name().lastName() + faker.random().nextInt(1000) + "@gamil.com";
-        driver.navigate().to("http://automationpractice.com/");
-        driver.findElement(By.xpath("//*[@id=\"header\"]/div[2]/div/div/nav/div[1]/a")).click();
+        mainPage.clickSignInButton();
         driver.findElement(By.id("email_create")).sendKeys(uniqueEmail);
         driver.findElement(By.id("SubmitCreate")).click();
         driver.findElement(By.id("id_gender2")).click();
@@ -102,16 +90,12 @@ public class RegistrationTests {
 
     @Test
     void shouldNotRegisterByTypingIncorrectEmailAddressFormat() {
-        driver.navigate().to("http://automationpractice.com/");
-        driver.findElement(By.xpath("//*[@id=\"header\"]/div[2]/div/div/nav/div[1]/a")).click();
+
+        mainPage.clickSignInButton();
         driver.findElement(By.id("email_create")).sendKeys("nmj;34567hd@.pl");
         driver.findElement(By.id("SubmitCreate")).click();
         Assertions.assertEquals("Invalid email address.", driver.findElement(By.xpath("//*[@id=\"create_account_error\"]/ol/li")).getText());
     }
 
-    @AfterAll
-    static void tearDown() {
 
-        driver.close();
-    }
 }

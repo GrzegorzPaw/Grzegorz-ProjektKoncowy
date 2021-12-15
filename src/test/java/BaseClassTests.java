@@ -8,23 +8,20 @@ import java.time.Duration;
 
 public class BaseClassTests {
 
-    public static WebDriver driver;
+    static WebDriver driver;
+    static final String URL = "http://automationpractice.com/";
 
     @BeforeAll
-    public static void warmuUp() {
+    static void setUp() {
 
         driver = new ChromeDriver();
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
-    }
-
-    @BeforeEach
-    void clearCookies() {
-        driver.manage().deleteAllCookies();
+        driver.navigate().to(URL);
     }
 
     @AfterAll
-    public static void tearDown() {
+    static void tearDown() {
         driver.close();
     }
 }
